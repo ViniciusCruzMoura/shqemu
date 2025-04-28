@@ -31,38 +31,44 @@
 QEMU_SYSTEM_X86_64=qemu-system-x86_64
 QEMU_IMG=qemu-img
 
-LINUX_QEMU_IMG_SIZE="8048M"
-LINUX_OS_ISO="./debian-12.9.0-amd64-netinst.iso"
-
-WIN_OS_ISO="./Win10_22H2_English_x64v1.iso"
-WIN_QEMU_IMG_SIZE="24048M"
+QEMU_IMG_SIZE="30G"
 
 QEMU_NET_FLAGS="-netdev user,id=net0,hostfwd=tcp::2222-:22,net=10.16.85.0/24,dhcpstart=10.16.85.9 -device e1000,netdev=net0"
-QEMU_DISPLAY_FLAGS="-display vnc=:0" #-display gtk , -display vnc=:0 , -display sdl
-QEMU_FLAGS="$QEMU_DISPLAY_FLAGS -enable-kvm -cpu host -smp $(nproc) -m 4048 -vga qxl $QEMU_NET_FLAGS"
+QEMU_DISPLAY_FLAGS="-display sdl,gl=on" #-display gtk , -display vnc=localhost:0 , -display sdl,gl=on , -nographic
+QEMU_DISPLAY_FLAGS="-display vnc=localhost:0"
+QEMU_FLAGS="$QEMU_DISPLAY_FLAGS -enable-kvm -cpu host,kvm=off -smp 1 -m 4G -vga qxl -usb $QEMU_NET_FLAGS" #$(nproc)
 
 NO_VNC_CLIENT="~/workspaces/opt/noVNC/utils/novnc_proxy --vnc localhost:5900"
 NO_VNC_BROWSER="firefox \"http://localhost:6080/vnc.html?host=&port=6080\" "
 
 case $1 in
-    install-linux)
+    install)
         if [ -z "$2" ]; then
             echo "Usage: $0 $1 <vhddisk.img>"
             echo "ERROR: no path to image is provided"
             exit 1
         fi
-        $QEMU_IMG create "$2" $LINUX_QEMU_IMG_SIZE
-        $QEMU_SYSTEM_X86_64 $QEMU_FLAGS -cdrom $LINUX_OS_ISO -hda "$2" -boot d
+        if [ -z "$3" ]; then
+            echo "Usage: $0 $1 $2 <file.iso>"
+            echo "ERROR: no path to ISO is provided"
+            exit 1
+        fi
+        $QEMU_IMG create "$2" $QEMU_IMG_SIZE
+        $QEMU_SYSTEM_X86_64 $QEMU_FLAGS -cdrom "$3" -hda "$2" -boot d
         exit 0
         ;;
-    install-win)
+    run-iso)
         if [ -z "$2" ]; then
             echo "Usage: $0 $1 <vhddisk.img>"
             echo "ERROR: no path to image is provided"
             exit 1
         fi
-        $QEMU_IMG create "$2" $WIN_QEMU_IMG_SIZE
-        $QEMU_SYSTEM_X86_64 $QEMU_FLAGS -cdrom $WIN_OS_ISO -hda "$2" -boot d
+        if [ -z "$3" ]; then
+            echo "Usage: $0 $1 $2 <file.iso>"
+            echo "ERROR: no path to ISO is provided"
+            exit 1
+        fi
+        $QEMU_SYSTEM_X86_64 $QEMU_FLAGS -cdrom "$3" -hda "$2" -boot d
         exit 0
         ;;
     run)

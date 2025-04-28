@@ -97,10 +97,8 @@ case $1 in
         echo
         echo "Commands:"
         echo "  help            Display this help information."
-        echo "  install-linux   Create a Linux virtual hard disk and initiate installation."
-        echo "                  Usage: $0 install-linux <vhddisk.img>"
-        echo "  install-win     Create a Windows (Win10) virtual hard disk and initiate installation."
-        echo "                  Usage: $0 install-win <vhddisk.img>"
+        echo "  install         Create a virtual hard disk and initiate installation."
+        echo "                  Usage: $0 install <vhddisk.img>"
         echo "  run             Run an existing virtual hard disk image."
         echo "                  Usage: $0 run <vhddisk.img>"
         echo "  sync            (TODO) Sync a shared directory."

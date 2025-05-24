@@ -34,9 +34,9 @@ QEMU_IMG=qemu-img
 QEMU_IMG_SIZE="30G"
 
 QEMU_NET_FLAGS="-netdev user,id=net0,hostfwd=tcp::2222-:22,net=10.16.85.0/24,dhcpstart=10.16.85.9 -device e1000,netdev=net0"
-QEMU_DISPLAY_FLAGS="-display sdl,gl=on" #-display gtk , -display vnc=localhost:0 , -display sdl,gl=on , -nographic
-QEMU_DISPLAY_FLAGS="-display vnc=localhost:0"
-QEMU_FLAGS="$QEMU_DISPLAY_FLAGS -enable-kvm -cpu host,kvm=off -smp 1 -m 4G -vga qxl -usb $QEMU_NET_FLAGS" #$(nproc)
+QEMU_DISPLAY_FLAGS="-display sdl,gl=on" #-display gtk,zoom-to-fit=on , -display vnc=localhost:0 , -display sdl,gl=on , -nographic
+#QEMU_DISPLAY_FLAGS="-display vnc=localhost:0"
+QEMU_FLAGS="$QEMU_DISPLAY_FLAGS -enable-kvm -cpu host,kvm=off -smp $(nproc) -m 7G -vga qxl -usb $QEMU_NET_FLAGS" #$(nproc)
 
 NO_VNC_CLIENT="~/workspaces/opt/noVNC/utils/novnc_proxy --vnc localhost:5900"
 NO_VNC_BROWSER="firefox \"http://localhost:6080/vnc.html?host=&port=6080\" "
@@ -86,6 +86,15 @@ case $1 in
         ;;
     mount)
         echo "TODO: mount shared directory"
+        if [ -z "$2" ]; then
+            echo "Usage: $0 $1 <vhddisk.img>"
+            echo "ERROR: no path to image is provided"
+            exit 1
+        fi
+        sync
+        sudo umount "./mnt/" || true
+        mkdir -p "./mnt/"
+        sudo mount -o loop,rw,uid=`id -u`,gid=`id -g` $2 "./mnt/"
         exit 0
         ;;
     -h|-help|--help|help|*)

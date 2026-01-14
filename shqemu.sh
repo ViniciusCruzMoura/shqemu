@@ -33,10 +33,11 @@ QEMU_IMG=qemu-img
 
 QEMU_IMG_SIZE="30G"
 
-QEMU_NET_FLAGS="-netdev user,id=net0,hostfwd=tcp::2222-:22,net=10.16.85.0/24,dhcpstart=10.16.85.9 -device e1000,netdev=net0"
+QEMU_NET_FLAGS="-netdev user,id=net0,hostfwd=tcp::50022-:22,hostfwd=tcp::58000-:8000,hostfwd=tcp::50080-:80,net=10.16.85.0/24,dhcpstart=10.16.85.9 -device e1000,netdev=net0"
 QEMU_DISPLAY_FLAGS="-display sdl,gl=on" #-display gtk,zoom-to-fit=on , -display vnc=localhost:0 , -display sdl,gl=on , -nographic
 #QEMU_DISPLAY_FLAGS="-display vnc=localhost:0"
-QEMU_FLAGS="$QEMU_DISPLAY_FLAGS -enable-kvm -cpu host,kvm=off -smp $(nproc) -m 7G -vga qxl -usb $QEMU_NET_FLAGS" #$(nproc)
+QEMU_DIR_FLAGS="-virtfs local,path=$(pwd)/shared,mount_tag=hostshare,security_model=none"
+QEMU_FLAGS="$QEMU_DISPLAY_FLAGS -enable-kvm -cpu host,kvm=off -smp $(nproc) -m 1G -vga qxl -usb $QEMU_NET_FLAGS $QEMU_DIR_FLAGS" #$(nproc)
 
 NO_VNC_CLIENT="~/workspaces/opt/noVNC/utils/novnc_proxy --vnc localhost:5900"
 NO_VNC_BROWSER="firefox \"http://localhost:6080/vnc.html?host=&port=6080\" "

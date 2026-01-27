@@ -10,9 +10,9 @@
 .\qemu-system-x86_64.exe -accel whpx -machine q35 ^
   -device usb-tablet ^
   -display sdl,gl=on ^
-  -smp 6 ^
-  -m 8G ^
-  -vga qxl ^
+  -smp 2 ^
+  -m 4G ^
+  -vga virtio ^
   -usb ^
   -netdev user,id=net0,hostfwd=tcp::50022-:22,net=10.16.85.0/24,dhcpstart=10.16.85.9 ^
   -device virtio-net-pci,netdev=net0 ^
